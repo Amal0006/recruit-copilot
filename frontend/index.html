@@ -130,6 +130,8 @@
 
   .name-line { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 22px; color: white; }
   .email-line { color: var(--text-dim); font-size: 13px; margin-bottom: 18px; }
+  .contact-link { color: var(--blue); text-decoration: none; }
+  .contact-link:hover { text-decoration: underline; }
 
   .field-label {
     font-size: 11px;
@@ -277,13 +279,13 @@ async function parseResume() {
     resultDiv.innerHTML = `
       <div class="result-card">
         <div class="name-line">${data.name || 'Unknown'}</div>
-        <div class="email-line">${data.email || 'no contact on file'}</div>
+        <div class="email-line">${data.email ? `<a href="mailto:${data.email}" class="contact-link">${data.email}</a>` : 'no contact on file'}</div>
         <div class="email-line" style="margin-top:-14px;">
           ${[
-            data.phone,
-            data.linkedin,
-            data.github,
-            data.portfolio
+            data.phone ? `<a href="tel:${data.phone.replace(/\s+/g, '')}" class="contact-link">${data.phone}</a>` : null,
+            data.linkedin ? `<a href="${data.linkedin.startsWith('http') ? data.linkedin : 'https://' + data.linkedin}" target="_blank" class="contact-link">${data.linkedin}</a>` : null,
+            data.github ? `<a href="${data.github.startsWith('http') ? data.github : 'https://' + data.github}" target="_blank" class="contact-link">${data.github}</a>` : null,
+            data.portfolio ? `<a href="${data.portfolio.startsWith('http') ? data.portfolio : 'https://' + data.portfolio}" target="_blank" class="contact-link">${data.portfolio}</a>` : null
           ].filter(Boolean).join(' &nbsp;·&nbsp; ') || ''}
         </div>
 
