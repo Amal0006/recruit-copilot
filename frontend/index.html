@@ -2,352 +2,240 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>RecruitCopilot — Candidate Dossier</title>
+<title>RecruitCopilot</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Special+Elite&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
   * { box-sizing: border-box; }
 
-  body {
-    font-family: 'JetBrains Mono', monospace;
-    background: #0d0d0a;
-    background-image:
-      radial-gradient(circle at 20% 20%, #1a1a14 0%, transparent 40%),
-      radial-gradient(circle at 80% 80%, #14140f 0%, transparent 40%);
-    color: #d4cfc0;
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 50px 30px;
-    min-height: 100vh;
+  :root {
+    --bg: #0a0a14;
+    --violet: #7c5cff;
+    --blue: #4d8dff;
+    --glass: rgba(255,255,255,0.05);
+    --glass-border: rgba(255,255,255,0.12);
+    --text: #e8e8f2;
+    --text-dim: #8b8ba3;
+    --success: #5eead4;
+    --warn: #ff8a8a;
   }
 
-  .header {
-    border-bottom: 2px dashed #4a4530;
-    padding-bottom: 20px;
-    margin-bottom: 30px;
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
     position: relative;
   }
 
-  .stamp {
-    position: absolute;
-    top: -10px;
-    right: 0;
-    border: 3px solid #b0413e;
-    color: #b0413e;
-    padding: 4px 12px;
+  .aurora {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .aurora-1 { width: 500px; height: 500px; background: var(--violet); top: -150px; left: -100px; animation: float1 18s ease-in-out infinite; }
+  .aurora-2 { width: 450px; height: 450px; background: var(--blue); top: 40%; right: -150px; animation: float2 22s ease-in-out infinite; }
+  .aurora-3 { width: 350px; height: 350px; background: #9d5cff; bottom: -100px; left: 30%; animation: float3 20s ease-in-out infinite; }
+  @keyframes float1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(60px, 40px); } }
+  @keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-50px, 60px); } }
+  @keyframes float3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(40px, -50px); } }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 60px 24px 80px; position: relative; z-index: 1; }
+
+  .header { text-align: center; margin-bottom: 40px; }
+  .header h1 {
+    font-family: 'Sora', sans-serif;
     font-weight: 800;
-    font-size: 12px;
-    letter-spacing: 2px;
-    transform: rotate(6deg);
-    opacity: 0.85;
-  }
-
-  h1 {
-    font-family: 'Special Elite', monospace;
-    color: #e8c468;
-    font-size: 26px;
-    letter-spacing: 1px;
+    font-size: 34px;
     margin: 0;
+    background: linear-gradient(120deg, #fff, var(--blue) 60%, var(--violet));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .header .subtitle { color: var(--text-dim); font-size: 14px; margin-top: 8px; letter-spacing: 0.3px; }
+
+  .glass-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   }
 
-  .subtitle {
-    color: #7a7460;
+  .section-title {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
     font-size: 13px;
-    margin-top: 6px;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
   }
-
-  .upload-zone {
-    border: 2px dashed #4a4530;
-    background: #16160f;
-    padding: 30px;
-    text-align: center;
-    margin-bottom: 20px;
-    transition: border-color 0.2s;
-  }
-  .upload-zone:hover { border-color: #e8c468; }
+  .section-title.accent { color: var(--blue); }
 
   input[type="file"] {
-    color: #d4cfc0;
-    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    font-family: 'Inter', sans-serif;
     font-size: 13px;
+    width: 100%;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed var(--glass-border);
+    border-radius: 12px;
+    margin-bottom: 16px;
   }
+
+  textarea, input[type="text"] {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    color: var(--text);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 12px 14px;
+    resize: vertical;
+  }
+  textarea { height: 100px; margin-bottom: 14px; }
+  textarea:focus, input[type="text"]:focus { outline: none; border-color: var(--blue); }
 
   button {
-    background: #e8c468;
-    color: #0d0d0a;
+    background: linear-gradient(120deg, var(--violet), var(--blue));
+    color: white;
     border: none;
-    padding: 12px 28px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 800;
-    letter-spacing: 1px;
-    cursor: pointer;
-    margin-top: 16px;
-    text-transform: uppercase;
+    padding: 12px 24px;
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
     font-size: 13px;
+    letter-spacing: 0.4px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
   }
-  button:hover { background: #f5d685; }
-  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,92,255,0.4); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  button.secondary { background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border); margin-left: 10px; }
 
-  .dossier {
-    background: #16160f;
-    border: 1px solid #4a4530;
-    padding: 30px;
-    margin-top: 30px;
-    position: relative;
-  }
-  .dossier::before {
-    content: "CLASSIFIED — CANDIDATE FILE";
-    position: absolute;
-    top: -10px;
-    left: 20px;
-    background: #0d0d0a;
-    padding: 0 10px;
+  .result-card { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--glass-border); }
+
+  .name-line { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 22px; color: white; }
+  .email-line { color: var(--text-dim); font-size: 13px; margin-bottom: 18px; }
+
+  .field-label {
     font-size: 11px;
-    color: #b0413e;
-    letter-spacing: 2px;
-  }
-
-  .name-line {
-    font-family: 'Special Elite', monospace;
-    font-size: 22px;
-    color: #e8c468;
-    border-bottom: 1px solid #4a4530;
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-  }
-
-  .email-line { color: #7a7460; font-size: 13px; margin-bottom: 20px; }
-
-  .section-label {
-    color: #b0413e;
-    font-size: 12px;
-    letter-spacing: 2px;
-    margin-top: 22px;
-    margin-bottom: 10px;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
+    color: var(--blue);
+    margin-top: 18px;
+    margin-bottom: 8px;
+    font-weight: 600;
   }
-  .section-label::before { content: "▸ "; }
 
   .tag {
     display: inline-block;
-    border: 1px solid #4a4530;
-    color: #d4cfc0;
-    padding: 3px 10px;
+    background: rgba(124,92,255,0.15);
+    border: 1px solid rgba(124,92,255,0.3);
+    color: #d4c9ff;
+    padding: 4px 12px;
     margin: 3px 4px 3px 0;
+    border-radius: 20px;
     font-size: 12px;
-    background: #0d0d0a;
+    font-family: 'JetBrains Mono', monospace;
   }
 
   .entry {
     font-size: 13px;
     line-height: 1.6;
-    padding-left: 12px;
-    border-left: 2px solid #4a4530;
-    margin-bottom: 10px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    border-left: 2px solid var(--blue);
   }
-  .entry strong { color: #e8c468; }
+  .entry strong { color: white; }
 
-  .loading {
-    color: #7a7460;
-    font-size: 13px;
-    animation: blink 1.2s infinite;
-  }
-  @keyframes blink { 50% { opacity: 0.3; } }
-
-  .error-msg { color: #b0413e; font-size: 13px; }
-
-  textarea {
-    width: 100%;
-    height: 100px;
-    background: #0d0d0a;
-    color: #d4cfc0;
-    border: 1px solid #4a4530;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    padding: 10px;
-    margin-top: 10px;
-    resize: vertical;
-  }
-  textarea:focus { outline: none; border-color: #e8c468; }
+  .loading { color: var(--text-dim); font-size: 13px; }
+  .error-msg { color: var(--warn); font-size: 13px; }
 
   .verdict-score {
-    font-family: 'Special Elite', monospace;
-    font-size: 28px;
-    color: #e8c468;
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 40px;
+    background: linear-gradient(120deg, var(--success), var(--blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
-  /* Chat copilot styles */
-  .chat-section {
-    margin-top: 30px;
-    border: 2px dashed #4a4530;
-    background: #16160f;
-    padding: 30px;
-  }
+  .chat-log { max-height: 320px; overflow-y: auto; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .chat-msg { padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; max-width: 85%; }
+  .chat-msg.user { background: rgba(77,141,255,0.15); border: 1px solid rgba(77,141,255,0.3); align-self: flex-end; }
+  .chat-msg.ai { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); align-self: flex-start; }
 
-  .chat-log {
-    max-height: 320px;
-    overflow-y: auto;
-    margin-top: 16px;
-    margin-bottom: 16px;
-  }
+  .chat-input-row { display: flex; gap: 10px; }
+  .chat-input-row input { flex: 1; }
+  .chat-input-row button { padding: 12px 22px; }
 
-  .chat-msg {
-    padding: 10px 14px;
-    margin-bottom: 10px;
-    font-size: 13px;
-    line-height: 1.5;
-    border-left: 2px solid #4a4530;
-  }
-  .chat-msg.user {
-    color: #d4cfc0;
-    border-left-color: #7a7460;
-  }
-  .chat-msg.user::before {
-    content: "RECRUITER ▸ ";
-    color: #7a7460;
-    font-weight: 700;
-  }
-  .chat-msg.ai {
-    color: #e8c468;
-    border-left-color: #b0413e;
-    background: #0d0d0a;
-  }
-  .chat-msg.ai::before {
-    content: "COPILOT ▸ ";
-    color: #b0413e;
-    font-weight: 700;
-  }
+  .resume-count { color: var(--text-dim); font-size: 12px; margin-bottom: 14px; }
 
-  .chat-input-row {
-    display: flex;
-    gap: 10px;
-  }
-  .chat-input-row input {
-    flex: 1;
-    background: #0d0d0a;
-    color: #d4cfc0;
-    border: 1px solid #4a4530;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    padding: 10px;
-  }
-  .chat-input-row input:focus { outline: none; border-color: #e8c468; }
-  .chat-input-row button { margin-top: 0; padding: 10px 20px; }
-
-  .resume-count {
-    color: #7a7460;
-    font-size: 12px;
-    margin-top: -6px;
-    margin-bottom: 6px;
-  }
-
-  /* Interview question styles */
-  .question-group-label {
-    color: #7a7460;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-top: 18px;
-    margin-bottom: 8px;
-  }
-  .question-item {
-    font-size: 13px;
-    line-height: 1.6;
-    padding: 8px 12px;
-    margin-bottom: 6px;
-    background: #0d0d0a;
-    border-left: 2px solid #e8c468;
-  }
-  .question-item::before {
-    content: "Q. ";
-    color: #e8c468;
-    font-weight: 700;
-  }
-
-  /* Torn paper edge + case number polish */
-  .dossier {
-    clip-path: polygon(
-      0% 1%, 3% 0%, 8% 1.5%, 14% 0%, 20% 1%, 27% 0.2%, 33% 1.3%, 40% 0%,
-      47% 1%, 54% 0.3%, 61% 1.2%, 68% 0%, 75% 1%, 82% 0.4%, 89% 1.1%, 96% 0%, 100% 1%,
-      100% 99%, 96% 100%, 89% 98.7%, 82% 100%, 75% 99%, 68% 100%, 61% 98.8%, 54% 100%,
-      47% 99%, 40% 100%, 33% 98.7%, 27% 100%, 20% 99%, 14% 100%, 8% 98.5%, 3% 100%, 0% 99%
-    );
-  }
-
-  .case-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    color: #5a5540;
-    letter-spacing: 1px;
-    margin-bottom: 14px;
-    border-bottom: 1px dotted #3a3628;
-    padding-bottom: 8px;
-  }
-
-  .tag {
-    position: relative;
-    overflow: hidden;
-  }
-  .tag .tag-text {
-    position: relative;
-    z-index: 1;
-  }
-  .tag .redaction-bar {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: #1a1a14;
-    border: 1px solid #4a4530;
-    z-index: 2;
-    animation: wipeReveal 0.6s ease forwards;
-    animation-delay: var(--delay, 0s);
-  }
-  @keyframes wipeReveal {
-    0% { transform: scaleX(1); transform-origin: left; }
-    99% { transform: scaleX(0); transform-origin: left; }
-    100% { transform: scaleX(0); display: none; }
-  }
+  .question-group-label { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-dim); margin-top: 16px; margin-bottom: 8px; }
+  .question-item { font-size: 13px; line-height: 1.6; padding: 10px 14px; margin-bottom: 6px; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 2px solid var(--violet); }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="stamp">AI-SCANNED</div>
-  <h1>RecruitCopilot</h1>
-  <div class="subtitle">candidate intelligence &mdash; dossier extraction unit</div>
-</div>
+<div class="aurora aurora-1"></div>
+<div class="aurora aurora-2"></div>
+<div class="aurora aurora-3"></div>
 
-<div class="upload-zone">
-  <input type="file" id="resumeFile" accept="application/pdf" />
-  <br>
-  <button onclick="parseResume()">Extract Dossier</button>
-</div>
+<div class="container">
 
-<div id="result"></div>
-
-<div class="upload-zone" id="matchZone" style="display:none; margin-top: 30px;">
-  <div class="section-label" style="margin-top:0;">Compare Against Job Posting</div>
-  <textarea id="jobDescription" placeholder="Paste job description here..."></textarea>
-  <br>
-  <button onclick="scoreMatch()">Score Match</button>
-  <button onclick="generateQuestions()" id="genQuestionsBtn">Generate Interview Questions</button>
-</div>
-
-<div id="matchResult"></div>
-<div id="questionsResult"></div>
-
-<div class="chat-section">
-  <div class="section-label" style="margin-top:0;">Copilot Chat</div>
-  <div class="resume-count" id="resumeCount">0 candidate files loaded in this session</div>
-  <div class="chat-log" id="chatLog"></div>
-  <div class="chat-input-row">
-    <input type="text" id="chatInput" placeholder="Ask about your uploaded candidates..." onkeydown="if(event.key==='Enter') sendChat();" />
-    <button onclick="sendChat()">Ask</button>
+  <div class="header">
+    <h1>RecruitCopilot</h1>
+    <div class="subtitle">AI-powered candidate intelligence</div>
   </div>
+
+  <div class="glass-card">
+    <div class="section-title accent">Upload Resume</div>
+    <input type="file" id="resumeFile" accept="application/pdf" />
+    <button onclick="parseResume()">Extract Dossier</button>
+    <div id="result"></div>
+  </div>
+
+  <div class="glass-card" id="matchZone" style="display:none;">
+    <div class="section-title accent">Compare Against Job Posting</div>
+    <textarea id="jobDescription" placeholder="Paste job description here..."></textarea>
+    <button onclick="scoreMatch()">Score Match</button>
+    <button class="secondary" onclick="generateQuestions()" id="genQuestionsBtn">Generate Interview Questions</button>
+    <div id="matchResult"></div>
+    <div id="questionsResult"></div>
+  </div>
+
+  <div class="glass-card">
+    <div class="section-title accent">Copilot Chat</div>
+    <div class="resume-count" id="resumeCount">0 candidate files loaded in this session</div>
+    <div class="chat-log" id="chatLog"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Ask about your uploaded candidates..." onkeydown="if(event.key==='Enter') sendChat();" />
+      <button onclick="sendChat()">Ask</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
+const API_BASE = 'https://recruit-copilot.onrender.com';
+
 let uploadedCount = 0;
 
 async function parseResume() {
@@ -355,17 +243,17 @@ async function parseResume() {
   const resultDiv = document.getElementById('result');
 
   if (!fileInput.files[0]) {
-    resultDiv.innerHTML = "<p class='error-msg'>// no file selected — attach a PDF first</p>";
+    resultDiv.innerHTML = "<p class='error-msg'>No file selected — attach a PDF first.</p>";
     return;
   }
 
-  resultDiv.innerHTML = "<p class='loading'>&gt; scanning document... extracting fields...</p>";
+  resultDiv.innerHTML = "<p class='loading'>Scanning document...</p>";
 
   const formData = new FormData();
   formData.append('resume', fileInput.files[0]);
 
   try {
-    const response = await fetch('http://localhost:3000/api/parse-resume', {
+    const response = await fetch(API_BASE + '/api/parse-resume', {
       method: 'POST',
       body: formData
     });
@@ -373,64 +261,53 @@ async function parseResume() {
     const data = await response.json();
 
     if (data.error) {
-      resultDiv.innerHTML = `<p class="error-msg">// error: ${data.error}</p>`;
+      resultDiv.innerHTML = `<p class="error-msg">Error: ${data.error}</p>`;
       return;
     }
 
-    // store parsed resume for match scoring / question generation, and reveal the job-match box
     window.lastParsedResume = data;
     document.getElementById('matchZone').style.display = 'block';
 
-    // track how many resumes have been uploaded this session (for the chat copilot)
     uploadedCount++;
     document.getElementById('resumeCount').textContent =
       `${uploadedCount} candidate file${uploadedCount === 1 ? '' : 's'} loaded in this session`;
 
-    // generate a fake case number + timestamp for the dossier theme
-    const caseNumber = 'RC-' + Math.floor(100000 + Math.random() * 900000);
-    const timestamp = new Date().toLocaleString('en-US', {
-      year: 'numeric', month: 'short', day: '2-digit',
-      hour: '2-digit', minute: '2-digit'
-    });
-
-    // build skill tags with a staggered redaction-wipe reveal animation
-    const skillTags = (data.skills || []).map((s, i) => `
-      <span class="tag">
-        <span class="tag-text">${s}</span>
-        <span class="redaction-bar" style="--delay: ${0.5 + i * 0.06}s"></span>
-      </span>
-    `).join('');
+    const skillTags = (data.skills || []).map(s => `<span class="tag">${s}</span>`).join('');
 
     resultDiv.innerHTML = `
-      <div class="dossier">
-        <div class="case-meta">
-          <span>CASE #${caseNumber}</span>
-          <span>LOGGED ${timestamp}</span>
-        </div>
-        <div class="name-line">${data.name || 'UNKNOWN SUBJECT'}</div>
+      <div class="result-card">
+        <div class="name-line">${data.name || 'Unknown'}</div>
         <div class="email-line">${data.email || 'no contact on file'}</div>
+        <div class="email-line" style="margin-top:-14px;">
+          ${[
+            data.phone,
+            data.linkedin,
+            data.github,
+            data.portfolio
+          ].filter(Boolean).join(' &nbsp;·&nbsp; ') || ''}
+        </div>
 
-        <div class="section-label">Skill Signature</div>
+        <div class="field-label">Skills</div>
         <div>${skillTags}</div>
 
-        <div class="section-label">Field Experience</div>
+        <div class="field-label">Experience</div>
         ${(data.experience || []).map(e => `
           <div class="entry"><strong>${e.role}</strong> — ${e.company}<br>${e.duration}</div>
-        `).join('') || '<div class="entry">no record</div>'}
+        `).join('') || '<div class="entry">No record</div>'}
 
-        <div class="section-label">Project Archive</div>
+        <div class="field-label">Projects</div>
         ${(data.projects || []).map(p => `
           <div class="entry"><strong>${p.title}</strong> — ${p.technologies}<br>${p.description}</div>
-        `).join('') || '<div class="entry">no record</div>'}
+        `).join('') || '<div class="entry">No record</div>'}
 
-        <div class="section-label">Academic Record</div>
+        <div class="field-label">Education</div>
         ${(data.education || []).map(e => `
           <div class="entry"><strong>${e.degree}</strong><br>${e.institution} — ${e.year}</div>
-        `).join('') || '<div class="entry">no record</div>'}
+        `).join('') || '<div class="entry">No record</div>'}
       </div>
     `;
   } catch (err) {
-    resultDiv.innerHTML = `<p class="error-msg">// connection failed — is the backend running?</p>`;
+    resultDiv.innerHTML = `<p class="error-msg">Connection failed — is the backend running?</p>`;
   }
 }
 
@@ -439,19 +316,19 @@ async function scoreMatch() {
   const matchDiv = document.getElementById('matchResult');
 
   if (!jobDescription.trim()) {
-    matchDiv.innerHTML = "<p class='error-msg'>// paste a job description first</p>";
+    matchDiv.innerHTML = "<p class='error-msg'>Paste a job description first.</p>";
     return;
   }
 
   if (!window.lastParsedResume) {
-    matchDiv.innerHTML = "<p class='error-msg'>// extract a dossier first</p>";
+    matchDiv.innerHTML = "<p class='error-msg'>Extract a dossier first.</p>";
     return;
   }
 
-  matchDiv.innerHTML = "<p class='loading'>&gt; cross-referencing candidate against posting...</p>";
+  matchDiv.innerHTML = "<p class='loading'>Cross-referencing candidate...</p>";
 
   try {
-    const response = await fetch('http://localhost:3000/api/match-score', {
+    const response = await fetch(API_BASE + '/api/match-score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -463,27 +340,27 @@ async function scoreMatch() {
     const data = await response.json();
 
     if (data.error) {
-      matchDiv.innerHTML = `<p class="error-msg">// error: ${data.error}</p>`;
+      matchDiv.innerHTML = `<p class="error-msg">Error: ${data.error}</p>`;
       return;
     }
 
     matchDiv.innerHTML = `
-      <div class="dossier">
-        <div class="section-label" style="margin-top:0;">Verdict</div>
+      <div class="result-card">
+        <div class="field-label" style="margin-top:0;">Match Score</div>
         <div class="verdict-score">${data.score}/100</div>
 
-        <div class="section-label">Strengths</div>
-        ${(data.strengths || []).map(s => `<div class="entry">${s}</div>`).join('') || '<div class="entry">none noted</div>'}
+        <div class="field-label">Strengths</div>
+        ${(data.strengths || []).map(s => `<div class="entry">${s}</div>`).join('') || '<div class="entry">None noted</div>'}
 
-        <div class="section-label">Gaps</div>
-        ${(data.gaps || []).map(g => `<div class="entry">${g}</div>`).join('') || '<div class="entry">none noted</div>'}
+        <div class="field-label">Gaps</div>
+        ${(data.gaps || []).map(g => `<div class="entry">${g}</div>`).join('') || '<div class="entry">None noted</div>'}
 
-        <div class="section-label">Assessment</div>
+        <div class="field-label">Assessment</div>
         <div class="entry">${data.summary || ''}</div>
       </div>
     `;
   } catch (err) {
-    matchDiv.innerHTML = `<p class="error-msg">// connection failed — is the backend running?</p>`;
+    matchDiv.innerHTML = `<p class="error-msg">Connection failed — is the backend running?</p>`;
   }
 }
 
@@ -493,15 +370,15 @@ async function generateQuestions() {
   const btn = document.getElementById('genQuestionsBtn');
 
   if (!window.lastParsedResume) {
-    questionsDiv.innerHTML = "<p class='error-msg'>// extract a dossier first</p>";
+    questionsDiv.innerHTML = "<p class='error-msg'>Extract a dossier first.</p>";
     return;
   }
 
   btn.disabled = true;
-  questionsDiv.innerHTML = "<p class='loading'>&gt; drafting interview questions...</p>";
+  questionsDiv.innerHTML = "<p class='loading'>Drafting interview questions...</p>";
 
   try {
-    const response = await fetch('http://localhost:3000/api/interview-questions', {
+    const response = await fetch(API_BASE + '/api/interview-questions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -514,13 +391,13 @@ async function generateQuestions() {
     btn.disabled = false;
 
     if (data.error) {
-      questionsDiv.innerHTML = `<p class="error-msg">// error: ${data.error}</p>`;
+      questionsDiv.innerHTML = `<p class="error-msg">Error: ${data.error}</p>`;
       return;
     }
 
     questionsDiv.innerHTML = `
-      <div class="dossier">
-        <div class="section-label" style="margin-top:0;">Interview Question Set</div>
+      <div class="result-card">
+        <div class="field-label" style="margin-top:0;">Interview Questions</div>
 
         <div class="question-group-label">Technical</div>
         ${(data.technical_questions || []).map(q => `<div class="question-item">${q}</div>`).join('')}
@@ -534,7 +411,7 @@ async function generateQuestions() {
     `;
   } catch (err) {
     btn.disabled = false;
-    questionsDiv.innerHTML = `<p class="error-msg">// connection failed — is the backend running?</p>`;
+    questionsDiv.innerHTML = `<p class="error-msg">Connection failed — is the backend running?</p>`;
   }
 }
 
@@ -545,18 +422,16 @@ async function sendChat() {
 
   if (!question) return;
 
-  // show the recruiter's question immediately
   chatLog.innerHTML += `<div class="chat-msg user">${question}</div>`;
   input.value = '';
   chatLog.scrollTop = chatLog.scrollHeight;
 
-  // show a temporary loading message
   const loadingId = 'loading-' + Date.now();
-  chatLog.innerHTML += `<div class="chat-msg ai" id="${loadingId}">thinking...</div>`;
+  chatLog.innerHTML += `<div class="chat-msg ai loading" id="${loadingId}">Thinking...</div>`;
   chatLog.scrollTop = chatLog.scrollHeight;
 
   try {
-    const response = await fetch('http://localhost:3000/api/chat', {
+    const response = await fetch(API_BASE + '/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ question })
@@ -564,16 +439,18 @@ async function sendChat() {
 
     const data = await response.json();
     const loadingEl = document.getElementById(loadingId);
+    loadingEl.classList.remove('loading');
 
     if (data.error) {
-      loadingEl.textContent = `error: ${data.error}`;
+      loadingEl.textContent = `Error: ${data.error}`;
     } else {
       loadingEl.textContent = data.answer;
     }
     chatLog.scrollTop = chatLog.scrollHeight;
   } catch (err) {
     const loadingEl = document.getElementById(loadingId);
-    loadingEl.textContent = 'connection failed — is the backend running?';
+    loadingEl.classList.remove('loading');
+    loadingEl.textContent = 'Connection failed — is the backend running?';
   }
 }
 </script>

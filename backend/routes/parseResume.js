@@ -30,12 +30,17 @@ router.post('/parse-resume', upload.single('resume'), async (req, res) => {
 {
   "name": "",
   "email": "",
+  "phone": "",
+  "linkedin": "",
+  "github": "",
+  "portfolio": "",
   "skills": [],
   "experience": [{"company": "", "role": "", "duration": ""}],
   "education": [{"institution": "", "degree": "", "year": ""}],
   "projects": [{"title": "", "technologies": "", "description": ""}]
 }
 
+- "phone", "linkedin", "github", "portfolio" should be extracted as plain strings exactly as they appear on the resume (e.g. "github.com/username", "linkedin.com/in/username"). If any of these are not present, return an empty string for that field.
 - "projects" should capture any personal, academic, or portfolio projects listed on the resume (separate from work "experience"). Include the project title, the technologies/tools used, and a short one-line description of what it does. If no projects are listed, return an empty array.
 
 Resume text:
