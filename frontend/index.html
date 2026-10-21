@@ -1,207 +1,362 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RecruitCopilot</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
-  * { box-sizing: border-box; }
+* { box-sizing: border-box; }
 
-  :root {
-    --bg: #0a0a14;
-    --violet: #7c5cff;
-    --blue: #4d8dff;
-    --glass: rgba(255,255,255,0.05);
-    --glass-border: rgba(255,255,255,0.12);
-    --text: #e8e8f2;
-    --text-dim: #8b8ba3;
-    --success: #5eead4;
-    --warn: #ff8a8a;
-  }
+:root {
+  --bg: #0a0a14;
+  --violet: #7c5cff;
+  --blue: #4d8dff;
+  --glass: rgba(255,255,255,0.05);
+  --glass-border: rgba(255,255,255,0.12);
+  --text: #e8e8f2;
+  --text-dim: #8b8ba3;
+  --success: #5eead4;
+  --warn: #ff8a8a;
+}
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    position: relative;
-  }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  position: relative;
+}
 
-  .aurora {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.35;
-    z-index: 0;
-    pointer-events: none;
-  }
-  .aurora-1 { width: 500px; height: 500px; background: var(--violet); top: -150px; left: -100px; animation: float1 18s ease-in-out infinite; }
-  .aurora-2 { width: 450px; height: 450px; background: var(--blue); top: 40%; right: -150px; animation: float2 22s ease-in-out infinite; }
-  .aurora-3 { width: 350px; height: 350px; background: #9d5cff; bottom: -100px; left: 30%; animation: float3 20s ease-in-out infinite; }
-  @keyframes float1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(60px, 40px); } }
-  @keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-50px, 60px); } }
-  @keyframes float3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(40px, -50px); } }
+.aurora {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  z-index: 0;
+  pointer-events: none;
+}
 
-  .container { max-width: 760px; margin: 0 auto; padding: 60px 24px 80px; position: relative; z-index: 1; }
+.aurora-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--violet);
+  top: -150px;
+  left: -100px;
+  animation: float1 18s ease-in-out infinite;
+}
 
-  .header { text-align: center; margin-bottom: 40px; }
-  .header h1 {
-    font-family: 'Sora', sans-serif;
-    font-weight: 800;
-    font-size: 34px;
-    margin: 0;
-    background: linear-gradient(120deg, #fff, var(--blue) 60%, var(--violet));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  .header .subtitle { color: var(--text-dim); font-size: 14px; margin-top: 8px; letter-spacing: 0.3px; }
+.aurora-2 {
+  width: 450px;
+  height: 450px;
+  background: var(--blue);
+  top: 40%;
+  right: -150px;
+  animation: float2 22s ease-in-out infinite;
+}
 
-  .glass-card {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 28px;
-    margin-bottom: 24px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  }
+.aurora-3 {
+  width: 350px;
+  height: 350px;
+  background: #9d5cff;
+  bottom: -100px;
+  left: 30%;
+  animation: float3 20s ease-in-out infinite;
+}
 
-  .section-title {
-    font-family: 'Sora', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 16px;
-  }
-  .section-title.accent { color: var(--blue); }
+@keyframes float1 {
+  0%,100% { transform: translate(0,0); }
+  50% { transform: translate(60px,40px); }
+}
 
-  input[type="file"] {
-    color: var(--text-dim);
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    width: 100%;
-    padding: 12px;
-    background: rgba(255,255,255,0.03);
-    border: 1px dashed var(--glass-border);
-    border-radius: 12px;
-    margin-bottom: 16px;
-  }
+@keyframes float2 {
+  0%,100% { transform: translate(0,0); }
+  50% { transform: translate(-50px,60px); }
+}
 
-  textarea, input[type="text"] {
-    width: 100%;
-    background: rgba(255,255,255,0.03);
-    color: var(--text);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    padding: 12px 14px;
-    resize: vertical;
-  }
-  textarea { height: 100px; margin-bottom: 14px; }
-  textarea:focus, input[type="text"]:focus { outline: none; border-color: var(--blue); }
+@keyframes float3 {
+  0%,100% { transform: translate(0,0); }
+  50% { transform: translate(40px,-50px); }
+}
 
-  button {
-    background: linear-gradient(120deg, var(--violet), var(--blue));
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    font-family: 'Sora', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.4px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-  button:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,92,255,0.4); }
-  button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-  button.secondary { background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border); margin-left: 10px; }
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+  position: relative;
+  z-index: 1;
+}
 
-  .result-card { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--glass-border); }
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
 
-  .name-line { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 22px; color: white; }
-  .email-line { color: var(--text-dim); font-size: 13px; margin-bottom: 18px; }
-  .contact-link { color: var(--blue); text-decoration: none; }
-  .contact-link:hover { text-decoration: underline; }
+.header h1 {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 34px;
+  margin: 0;
+  background: linear-gradient(120deg,#fff,var(--blue) 60%,var(--violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 
-  .field-label {
-    font-size: 11px;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: var(--blue);
-    margin-top: 18px;
-    margin-bottom: 8px;
-    font-weight: 600;
-  }
+.header .subtitle {
+  color: var(--text-dim);
+  font-size: 14px;
+  margin-top: 8px;
+  letter-spacing: 0.3px;
+}
 
-  .tag {
-    display: inline-block;
-    background: rgba(124,92,255,0.15);
-    border: 1px solid rgba(124,92,255,0.3);
-    color: #d4c9ff;
-    padding: 4px 12px;
-    margin: 3px 4px 3px 0;
-    border-radius: 20px;
-    font-size: 12px;
-    font-family: 'JetBrains Mono', monospace;
-  }
+.glass-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
 
-  .entry {
-    font-size: 13px;
-    line-height: 1.6;
-    padding: 10px 14px;
-    margin-bottom: 8px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 10px;
-    border-left: 2px solid var(--blue);
-  }
-  .entry strong { color: white; }
+.section-title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
 
-  .loading { color: var(--text-dim); font-size: 13px; }
-  .error-msg { color: var(--warn); font-size: 13px; }
+.section-title.accent { color: var(--blue); }
 
-  .verdict-score {
-    font-family: 'Sora', sans-serif;
-    font-weight: 800;
-    font-size: 40px;
-    background: linear-gradient(120deg, var(--success), var(--blue));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
+input[type="file"] {
+  color: var(--text-dim);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  width: 100%;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed var(--glass-border);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
 
-  .chat-log { max-height: 320px; overflow-y: auto; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
-  .chat-msg { padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; max-width: 85%; }
-  .chat-msg.user { background: rgba(77,141,255,0.15); border: 1px solid rgba(77,141,255,0.3); align-self: flex-end; }
-  .chat-msg.ai { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); align-self: flex-start; }
+textarea, input[type="text"] {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  padding: 12px 14px;
+  resize: vertical;
+}
 
-  .chat-input-row { display: flex; gap: 10px; }
-  .chat-input-row input { flex: 1; }
-  .chat-input-row button { padding: 12px 22px; }
+textarea { height: 100px; margin-bottom: 14px; }
 
-  .resume-count { color: var(--text-dim); font-size: 12px; margin-bottom: 14px; }
+textarea:focus, input[type="text"]:focus {
+  outline: none;
+  border-color: var(--blue);
+}
 
-  .question-group-label { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-dim); margin-top: 16px; margin-bottom: 8px; }
-  .question-item { font-size: 13px; line-height: 1.6; padding: 10px 14px; margin-bottom: 6px; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 2px solid var(--violet); }
+button {
+  background: linear-gradient(120deg,var(--violet),var(--blue));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s,box-shadow 0.15s;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124,92,255,0.4);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+button.secondary {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--glass-border);
+  margin-left: 10px;
+}
+
+.result-card {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--glass-border);
+}
+
+.name-line {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: white;
+}
+
+.email-line {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-bottom: 18px;
+  overflow-wrap: anywhere;
+}
+
+.contact-link {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.contact-link:hover { text-decoration: underline; }
+
+.field-label {
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-top: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.tag {
+  display: inline-block;
+  background: rgba(124,92,255,0.15);
+  border: 1px solid rgba(124,92,255,0.3);
+  color: #d4c9ff;
+  padding: 4px 12px;
+  margin: 3px 4px 3px 0;
+  border-radius: 20px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.entry {
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  border-left: 2px solid var(--blue);
+  overflow-wrap: anywhere;
+}
+
+.entry strong { color: white; }
+
+.loading { color: var(--text-dim); font-size: 13px; }
+.error-msg { color: var(--warn); font-size: 13px; }
+
+.verdict-score {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 40px;
+  background: linear-gradient(120deg,var(--success),var(--blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.chat-log {
+  max-height: 320px;
+  overflow-y: auto;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-msg {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 85%;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.chat-msg.user {
+  background: rgba(77,141,255,0.15);
+  border: 1px solid rgba(77,141,255,0.3);
+  align-self: flex-end;
+}
+
+.chat-msg.ai {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--glass-border);
+  align-self: flex-start;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input-row input { flex: 1; min-width: 0; }
+.chat-input-row button { padding: 12px 22px; }
+
+.resume-count {
+  color: var(--text-dim);
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+
+.question-group-label {
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.question-item {
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  border-left: 2px solid var(--violet);
+}
+
+@media (max-width: 600px) {
+  .container { padding: 32px 14px 48px; }
+  .header h1 { font-size: 29px; }
+  .glass-card { padding: 20px 16px; border-radius: 16px; }
+  button { padding: 12px 16px; }
+  button.secondary { margin-left: 0; margin-top: 8px; }
+  .chat-input-row { flex-direction: column; }
+  .chat-input-row button { width: 100%; }
+}
 </style>
 </head>
 <body>
-
 <div class="aurora aurora-1"></div>
 <div class="aurora aurora-2"></div>
 <div class="aurora aurora-3"></div>
 
 <div class="container">
-
   <div class="header">
     <h1>RecruitCopilot</h1>
     <div class="subtitle">AI-powered candidate intelligence</div>
@@ -209,36 +364,34 @@
 
   <div class="glass-card">
     <div class="section-title accent">Upload Resume</div>
-    <input type="file" id="resumeFile" accept="application/pdf" />
-    <button onclick="parseResume()">Extract Dossier</button>
-    <div id="result"></div>
+    <input type="file" id="resumeFile" accept="application/pdf,.pdf">
+    <button type="button" id="parseButton" onclick="parseResume()">Extract Dossier</button>
+    <div id="result" aria-live="polite"></div>
   </div>
 
   <div class="glass-card" id="matchZone" style="display:none;">
     <div class="section-title accent">Compare Against Job Posting</div>
     <textarea id="jobDescription" placeholder="Paste job description here..."></textarea>
-    <button onclick="scoreMatch()">Score Match</button>
-    <button class="secondary" onclick="generateQuestions()" id="genQuestionsBtn">Generate Interview Questions</button>
-    <div id="matchResult"></div>
-    <div id="questionsResult"></div>
+    <button type="button" onclick="scoreMatch()">Score Match</button>
+    <button class="secondary" type="button" onclick="generateQuestions()" id="genQuestionsBtn">Generate Interview Questions</button>
+    <div id="matchResult" aria-live="polite"></div>
+    <div id="questionsResult" aria-live="polite"></div>
   </div>
 
   <div class="glass-card">
     <div class="section-title accent">Copilot Chat</div>
     <div class="resume-count" id="resumeCount">0 candidate files loaded in this session</div>
     <button class="secondary" type="button" onclick="clearSessionResumes()">Clear session resumes</button>
-    <div class="chat-log" id="chatLog"></div>
+    <div class="chat-log" id="chatLog" aria-live="polite"></div>
     <div class="chat-input-row">
-      <input type="text" id="chatInput" placeholder="Ask about your uploaded candidates..." onkeydown="if(event.key==='Enter') sendChat();" />
-      <button onclick="sendChat()">Ask</button>
+      <input type="text" id="chatInput" placeholder="Ask about your uploaded candidates..." onkeydown="if(event.key==='Enter') sendChat();">
+      <button type="button" onclick="sendChat()">Ask</button>
     </div>
   </div>
-
 </div>
 
 <script>
-const API_BASE = 'http://localhost:3000';
-
+const API_BASE = 'https://recruit-copilot.onrender.com';
 const SESSION_RESUMES_KEY = 'recruitCopilot.sessionResumes';
 
 function getSessionResumes() {
@@ -253,10 +406,14 @@ function getSessionResumes() {
 }
 
 window.sessionResumes = getSessionResumes();
+window.lastParsedResume = null;
 
 function saveSessionResumes() {
   try {
-    sessionStorage.setItem(SESSION_RESUMES_KEY, JSON.stringify(window.sessionResumes));
+    sessionStorage.setItem(
+      SESSION_RESUMES_KEY,
+      JSON.stringify(window.sessionResumes)
+    );
     return true;
   } catch (error) {
     console.error('Could not save session resumes:', error);
@@ -280,40 +437,80 @@ function escapeHtml(value) {
   }[character]));
 }
 
+function safeUrl(value) {
+  if (!value) return '';
+  const text = String(value).trim();
+  const normalized = /^https?:\/\//i.test(text) ? text : `https://${text}`;
+
+  try {
+    const url = new URL(normalized);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
 function renderResume(data) {
-  const skillTags = (data.skills || [])
+  const skillTags = (Array.isArray(data.skills) ? data.skills : [])
     .map(skill => `<span class="tag">${escapeHtml(skill)}</span>`)
     .join('');
 
   document.getElementById('matchZone').style.display = 'block';
+
+  const contactLinks = [
+    data.phone
+      ? `<a href="tel:${escapeHtml(String(data.phone).replace(/\s+/g, ''))}" class="contact-link">${escapeHtml(data.phone)}</a>`
+      : null,
+    data.linkedin && safeUrl(data.linkedin)
+      ? `<a href="${escapeHtml(safeUrl(data.linkedin))}" target="_blank" rel="noopener noreferrer" class="contact-link">LinkedIn</a>`
+      : null,
+    data.github && safeUrl(data.github)
+      ? `<a href="${escapeHtml(safeUrl(data.github))}" target="_blank" rel="noopener noreferrer" class="contact-link">GitHub</a>`
+      : null,
+    data.portfolio && safeUrl(data.portfolio)
+      ? `<a href="${escapeHtml(safeUrl(data.portfolio))}" target="_blank" rel="noopener noreferrer" class="contact-link">Portfolio</a>`
+      : null
+  ].filter(Boolean).join(' &nbsp;·&nbsp; ');
+
   document.getElementById('result').innerHTML = `
     <div class="result-card">
       <div class="name-line">${escapeHtml(data.name || 'Unknown')}</div>
-      <div class="email-line">${data.email
-        ? `<a href="mailto:${escapeHtml(data.email)}" class="contact-link">${escapeHtml(data.email)}</a>`
-        : 'no contact on file'}</div>
-      <div class="email-line" style="margin-top:-14px;">
-        ${[
-          data.phone ? `<a href="tel:${escapeHtml(String(data.phone).replace(/\\s+/g, ''))}" class="contact-link">${escapeHtml(data.phone)}</a>` : null,
-          data.linkedin ? `<a href="${escapeHtml(data.linkedin.startsWith('http') ? data.linkedin : 'https://' + data.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-link">${escapeHtml(data.linkedin)}</a>` : null,
-          data.github ? `<a href="${escapeHtml(data.github.startsWith('http') ? data.github : 'https://' + data.github)}" target="_blank" rel="noopener noreferrer" class="contact-link">${escapeHtml(data.github)}</a>` : null,
-          data.portfolio ? `<a href="${escapeHtml(data.portfolio.startsWith('http') ? data.portfolio : 'https://' + data.portfolio)}" target="_blank" rel="noopener noreferrer" class="contact-link">${escapeHtml(data.portfolio)}</a>` : null
-        ].filter(Boolean).join(' &nbsp;·&nbsp; ') || ''}
-      </div>
+      <div class="email-line">${
+        data.email
+          ? `<a href="mailto:${escapeHtml(data.email)}" class="contact-link">${escapeHtml(data.email)}</a>`
+          : 'No contact on file'
+      }</div>
+      <div class="email-line">${contactLinks}</div>
+
       <div class="field-label">Skills</div>
-      <div>${skillTags}</div>
+      <div>${skillTags || '<div class="entry">No skills extracted</div>'}</div>
+
       <div class="field-label">Experience</div>
-      ${(data.experience || []).map(item => `
-        <div class="entry"><strong>${escapeHtml(item.role)}</strong> — ${escapeHtml(item.company)}<br>${escapeHtml(item.duration)}</div>
-      `).join('') || '<div class="entry">No record</div>'}
+      ${(Array.isArray(data.experience) ? data.experience : []).map(item => `
+        <div class="entry">
+          <strong>${escapeHtml(item.role || 'Role not specified')}</strong>
+          — ${escapeHtml(item.company || 'Company not specified')}<br>
+          ${escapeHtml(item.duration || '')}
+        </div>
+      `).join('') || '<div class="entry">No experience recorded</div>'}
+
       <div class="field-label">Projects</div>
-      ${(data.projects || []).map(item => `
-        <div class="entry"><strong>${escapeHtml(item.title)}</strong> — ${escapeHtml(item.technologies)}<br>${escapeHtml(item.description)}</div>
-      `).join('') || '<div class="entry">No record</div>'}
+      ${(Array.isArray(data.projects) ? data.projects : []).map(item => `
+        <div class="entry">
+          <strong>${escapeHtml(item.title || 'Project')}</strong>
+          — ${escapeHtml(item.technologies || '')}<br>
+          ${escapeHtml(item.description || '')}
+        </div>
+      `).join('') || '<div class="entry">No projects recorded</div>'}
+
       <div class="field-label">Education</div>
-      ${(data.education || []).map(item => `
-        <div class="entry"><strong>${escapeHtml(item.degree)}</strong><br>${escapeHtml(item.institution)} — ${escapeHtml(item.year)}</div>
-      `).join('') || '<div class="entry">No record</div>'}
+      ${(Array.isArray(data.education) ? data.education : []).map(item => `
+        <div class="entry">
+          <strong>${escapeHtml(item.degree || 'Degree not specified')}</strong><br>
+          ${escapeHtml(item.institution || '')}
+          ${item.year ? `— ${escapeHtml(item.year)}` : ''}
+        </div>
+      `).join('') || '<div class="entry">No education recorded</div>'}
     </div>
   `;
 }
@@ -322,7 +519,9 @@ function restoreSessionState() {
   updateResumeCount();
 
   if (window.sessionResumes.length > 0) {
-    window.lastParsedResume = window.sessionResumes[window.sessionResumes.length - 1];
+    window.lastParsedResume =
+      window.sessionResumes[window.sessionResumes.length - 1];
+
     renderResume(window.lastParsedResume);
 
     const notice = document.createElement('p');
@@ -350,34 +549,47 @@ function clearSessionResumes() {
   document.getElementById('chatLog').innerHTML = '';
 }
 
+async function readResponse(response) {
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error || `Request failed (${response.status})`);
+  }
+
+  return data;
+}
+
 document.addEventListener('DOMContentLoaded', restoreSessionState);
 
 async function parseResume() {
   const fileInput = document.getElementById('resumeFile');
   const resultDiv = document.getElementById('result');
+  const button = document.getElementById('parseButton');
+  const file = fileInput.files && fileInput.files[0];
 
-  if (!fileInput.files[0]) {
-    resultDiv.innerHTML = "<p class='error-msg'>No file selected — attach a PDF first.</p>";
+  if (!file) {
+    resultDiv.innerHTML = '<p class="error-msg">No file selected — attach a PDF first.</p>';
     return;
   }
 
-  resultDiv.innerHTML = "<p class='loading'>Scanning document...</p>";
+  if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+    resultDiv.innerHTML = '<p class="error-msg">Please select a PDF file.</p>';
+    return;
+  }
+
+  resultDiv.innerHTML = '<p class="loading">Scanning document...</p>';
+  button.disabled = true;
 
   const formData = new FormData();
-  formData.append('resume', fileInput.files[0]);
+  formData.append('resume', file);
 
   try {
-    const response = await fetch(API_BASE + '/api/parse-resume', {
+    const response = await fetch(`${API_BASE}/api/parse-resume`, {
       method: 'POST',
       body: formData
     });
 
-    const data = await response.json();
-
-    if (data.error) {
-      resultDiv.innerHTML = `<p class="error-msg">Error: ${data.error}</p>`;
-      return;
-    }
+    const data = await readResponse(response);
 
     window.lastParsedResume = data;
     window.sessionResumes.push(data);
@@ -392,16 +604,19 @@ async function parseResume() {
       warning.textContent = 'Resume extracted, but this browser could not save it for refresh recovery. Check browser storage settings.';
       document.getElementById('result').prepend(warning);
     }
-  } catch (err) {
-    resultDiv.innerHTML = `<p class="error-msg">Connection failed — is the backend running?</p>`;
+  } catch (error) {
+    console.error('Resume parsing failed:', error);
+    resultDiv.innerHTML = `<p class="error-msg">${escapeHtml(error.message || 'Unable to process this resume.')}</p>`;
+  } finally {
+    button.disabled = false;
   }
 }
 
 async function scoreMatch() {
-  const jobDescription = document.getElementById('jobDescription').value;
+  const jobDescription = document.getElementById('jobDescription').value.trim();
   const matchDiv = document.getElementById('matchResult');
 
-  if (!jobDescription.trim()) {
+  if (!jobDescription) {
     matchDiv.innerHTML = "<p class='error-msg'>Paste a job description first.</p>";
     return;
   }
@@ -411,60 +626,60 @@ async function scoreMatch() {
     return;
   }
 
-  matchDiv.innerHTML = "<p class='loading'>Cross-referencing candidate...</p>";
+  matchDiv.innerHTML = '<p class="loading">Cross-referencing candidate...</p>';
 
   try {
-    const response = await fetch(API_BASE + '/api/match-score', {
+    const response = await fetch(`${API_BASE}/api/match-score`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         resumeData: window.lastParsedResume,
-        jobDescription: jobDescription
+        jobDescription
       })
     });
 
-    const data = await response.json();
-
-    if (data.error) {
-      matchDiv.innerHTML = `<p class="error-msg">Error: ${data.error}</p>`;
-      return;
-    }
+    const data = await readResponse(response);
 
     matchDiv.innerHTML = `
       <div class="result-card">
         <div class="field-label" style="margin-top:0;">Match Score</div>
-        <div class="verdict-score">${data.score}/100</div>
+        <div class="verdict-score">${escapeHtml(data.score ?? 'N/A')}/100</div>
 
         <div class="field-label">Strengths</div>
-        ${(data.strengths || []).map(s => `<div class="entry">${s}</div>`).join('') || '<div class="entry">None noted</div>'}
+        ${(Array.isArray(data.strengths) ? data.strengths : [])
+          .map(item => `<div class="entry">${escapeHtml(item)}</div>`)
+          .join('') || '<div class="entry">None noted</div>'}
 
         <div class="field-label">Gaps</div>
-        ${(data.gaps || []).map(g => `<div class="entry">${g}</div>`).join('') || '<div class="entry">None noted</div>'}
+        ${(Array.isArray(data.gaps) ? data.gaps : [])
+          .map(item => `<div class="entry">${escapeHtml(item)}</div>`)
+          .join('') || '<div class="entry">None noted</div>'}
 
         <div class="field-label">Assessment</div>
-        <div class="entry">${data.summary || ''}</div>
+        <div class="entry">${escapeHtml(data.summary || '')}</div>
       </div>
     `;
-  } catch (err) {
-    matchDiv.innerHTML = `<p class="error-msg">Connection failed — is the backend running?</p>`;
+  } catch (error) {
+    console.error('Match scoring failed:', error);
+    matchDiv.innerHTML = `<p class="error-msg">${escapeHtml(error.message || 'Unable to score this candidate.')}</p>`;
   }
 }
 
 async function generateQuestions() {
-  const jobDescription = document.getElementById('jobDescription').value;
+  const jobDescription = document.getElementById('jobDescription').value.trim();
   const questionsDiv = document.getElementById('questionsResult');
-  const btn = document.getElementById('genQuestionsBtn');
+  const button = document.getElementById('genQuestionsBtn');
 
   if (!window.lastParsedResume) {
     questionsDiv.innerHTML = "<p class='error-msg'>Extract a dossier first.</p>";
     return;
   }
 
-  btn.disabled = true;
-  questionsDiv.innerHTML = "<p class='loading'>Drafting interview questions...</p>";
+  button.disabled = true;
+  questionsDiv.innerHTML = '<p class="loading">Drafting interview questions...</p>';
 
   try {
-    const response = await fetch(API_BASE + '/api/interview-questions', {
+    const response = await fetch(`${API_BASE}/api/interview-questions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -473,31 +688,33 @@ async function generateQuestions() {
       })
     });
 
-    const data = await response.json();
-    btn.disabled = false;
-
-    if (data.error) {
-      questionsDiv.innerHTML = `<p class="error-msg">Error: ${data.error}</p>`;
-      return;
-    }
+    const data = await readResponse(response);
 
     questionsDiv.innerHTML = `
       <div class="result-card">
         <div class="field-label" style="margin-top:0;">Interview Questions</div>
 
         <div class="question-group-label">Technical</div>
-        ${(data.technical_questions || []).map(q => `<div class="question-item">${q}</div>`).join('')}
+        ${(Array.isArray(data.technical_questions) ? data.technical_questions : [])
+          .map(question => `<div class="question-item">${escapeHtml(question)}</div>`)
+          .join('') || '<div class="entry">No technical questions returned</div>'}
 
         <div class="question-group-label">Behavioral</div>
-        ${(data.behavioral_questions || []).map(q => `<div class="question-item">${q}</div>`).join('')}
+        ${(Array.isArray(data.behavioral_questions) ? data.behavioral_questions : [])
+          .map(question => `<div class="question-item">${escapeHtml(question)}</div>`)
+          .join('') || '<div class="entry">No behavioral questions returned</div>'}
 
         <div class="question-group-label">Gap-Probing</div>
-        ${(data.gap_probing_questions || []).map(q => `<div class="question-item">${q}</div>`).join('')}
+        ${(Array.isArray(data.gap_probing_questions) ? data.gap_probing_questions : [])
+          .map(question => `<div class="question-item">${escapeHtml(question)}</div>`)
+          .join('') || '<div class="entry">No gap-probing questions returned</div>'}
       </div>
     `;
-  } catch (err) {
-    btn.disabled = false;
-    questionsDiv.innerHTML = `<p class="error-msg">Connection failed — is the backend running?</p>`;
+  } catch (error) {
+    console.error('Interview question generation failed:', error);
+    questionsDiv.innerHTML = `<p class="error-msg">${escapeHtml(error.message || 'Unable to generate questions.')}</p>`;
+  } finally {
+    button.disabled = false;
   }
 }
 
@@ -508,38 +725,47 @@ async function sendChat() {
 
   if (!question) return;
 
-  chatLog.innerHTML += `<div class="chat-msg user">${question}</div>`;
+  appendChatMessage('user', question);
   input.value = '';
-  chatLog.scrollTop = chatLog.scrollHeight;
 
-  const loadingId = 'loading-' + Date.now();
-  chatLog.innerHTML += `<div class="chat-msg ai loading" id="${loadingId}">Thinking...</div>`;
+  const loadingMessage = document.createElement('div');
+  loadingMessage.className = 'chat-msg ai loading';
+  loadingMessage.textContent = 'Thinking...';
+  chatLog.appendChild(loadingMessage);
   chatLog.scrollTop = chatLog.scrollHeight;
 
   try {
-    const response = await fetch(API_BASE + '/api/chat', {
+    const response = await fetch(`${API_BASE}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question, resumes: window.sessionResumes })
+      body: JSON.stringify({
+        question,
+        resumes: window.sessionResumes
+      })
     });
 
-    const data = await response.json();
-    const loadingEl = document.getElementById(loadingId);
-    loadingEl.classList.remove('loading');
-
-    if (data.error) {
-      loadingEl.textContent = `Error: ${data.error}`;
-    } else {
-      loadingEl.textContent = data.answer;
-    }
-    chatLog.scrollTop = chatLog.scrollHeight;
-  } catch (err) {
-    const loadingEl = document.getElementById(loadingId);
-    loadingEl.classList.remove('loading');
-    loadingEl.textContent = 'Connection failed — is the backend running?';
+    const data = await readResponse(response);
+    loadingMessage.classList.remove('loading');
+    loadingMessage.textContent = data.answer || 'The assistant returned an empty answer.';
+  } catch (error) {
+    console.error('Copilot chat failed:', error);
+    loadingMessage.classList.remove('loading');
+    loadingMessage.textContent = error.message || 'Unable to connect to the backend.';
   }
+
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+function appendChatMessage(type, message) {
+  const chatLog = document.getElementById('chatLog');
+  const element = document.createElement('div');
+
+  element.className = `chat-msg ${type}`;
+  element.textContent = message;
+
+  chatLog.appendChild(element);
+  chatLog.scrollTop = chatLog.scrollHeight;
 }
 </script>
-
 </body>
 </html>
