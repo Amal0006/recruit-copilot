@@ -226,6 +226,7 @@
   <div class="glass-card">
     <div class="section-title accent">Copilot Chat</div>
     <div class="resume-count" id="resumeCount">0 candidate files loaded in this session</div>
+    <button class="secondary" type="button" onclick="clearSessionResumes()">Clear session resumes</button>
     <div class="chat-log" id="chatLog"></div>
     <div class="chat-input-row">
       <input type="text" id="chatInput" placeholder="Ask about your uploaded candidates..." onkeydown="if(event.key==='Enter') sendChat();" />
@@ -236,9 +237,120 @@
 </div>
 
 <script>
-const API_BASE = 'https://recruit-copilot.onrender.com';
+const API_BASE = 'http://localhost:3000';
 
-let uploadedCount = 0;
+const SESSION_RESUMES_KEY = 'recruitCopilot.sessionResumes';
+
+function getSessionResumes() {
+  try {
+    const stored = sessionStorage.getItem(SESSION_RESUMES_KEY);
+    const parsed = stored ? JSON.parse(stored) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error('Could not restore session resumes:', error);
+    return [];
+  }
+}
+
+window.sessionResumes = getSessionResumes();
+
+function saveSessionResumes() {
+  try {
+    sessionStorage.setItem(SESSION_RESUMES_KEY, JSON.stringify(window.sessionResumes));
+    return true;
+  } catch (error) {
+    console.error('Could not save session resumes:', error);
+    return false;
+  }
+}
+
+function updateResumeCount() {
+  const count = window.sessionResumes.length;
+  document.getElementById('resumeCount').textContent =
+    `${count} candidate file${count === 1 ? '' : 's'} loaded in this session`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[character]));
+}
+
+function renderResume(data) {
+  const skillTags = (data.skills || [])
+    .map(skill => `<span class="tag">${escapeHtml(skill)}</span>`)
+    .join('');
+
+  document.getElementById('matchZone').style.display = 'block';
+  document.getElementById('result').innerHTML = `
+    <div class="result-card">
+      <div class="name-line">${escapeHtml(data.name || 'Unknown')}</div>
+      <div class="email-line">${data.email
+        ? `<a href="mailto:${escapeHtml(data.email)}" class="contact-link">${escapeHtml(data.email)}</a>`
+        : 'no contact on file'}</div>
+      <div class="email-line" style="margin-top:-14px;">
+        ${[
+          data.phone ? `<a href="tel:${escapeHtml(String(data.phone).replace(/\\s+/g, ''))}" class="contact-link">${escapeHtml(data.phone)}</a>` : null,
+          data.linkedin ? `<a href="${escapeHtml(data.linkedin.startsWith('http') ? data.linkedin : 'https://' + data.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-link">${escapeHtml(data.linkedin)}</a>` : null,
+          data.github ? `<a href="${escapeHtml(data.github.startsWith('http') ? data.github : 'https://' + data.github)}" target="_blank" rel="noopener noreferrer" class="contact-link">${escapeHtml(data.github)}</a>` : null,
+          data.portfolio ? `<a href="${escapeHtml(data.portfolio.startsWith('http') ? data.portfolio : 'https://' + data.portfolio)}" target="_blank" rel="noopener noreferrer" class="contact-link">${escapeHtml(data.portfolio)}</a>` : null
+        ].filter(Boolean).join(' &nbsp;·&nbsp; ') || ''}
+      </div>
+      <div class="field-label">Skills</div>
+      <div>${skillTags}</div>
+      <div class="field-label">Experience</div>
+      ${(data.experience || []).map(item => `
+        <div class="entry"><strong>${escapeHtml(item.role)}</strong> — ${escapeHtml(item.company)}<br>${escapeHtml(item.duration)}</div>
+      `).join('') || '<div class="entry">No record</div>'}
+      <div class="field-label">Projects</div>
+      ${(data.projects || []).map(item => `
+        <div class="entry"><strong>${escapeHtml(item.title)}</strong> — ${escapeHtml(item.technologies)}<br>${escapeHtml(item.description)}</div>
+      `).join('') || '<div class="entry">No record</div>'}
+      <div class="field-label">Education</div>
+      ${(data.education || []).map(item => `
+        <div class="entry"><strong>${escapeHtml(item.degree)}</strong><br>${escapeHtml(item.institution)} — ${escapeHtml(item.year)}</div>
+      `).join('') || '<div class="entry">No record</div>'}
+    </div>
+  `;
+}
+
+function restoreSessionState() {
+  updateResumeCount();
+
+  if (window.sessionResumes.length > 0) {
+    window.lastParsedResume = window.sessionResumes[window.sessionResumes.length - 1];
+    renderResume(window.lastParsedResume);
+
+    const notice = document.createElement('p');
+    notice.className = 'loading';
+    notice.textContent = 'Restored resume data for this browser tab session.';
+    document.getElementById('result').prepend(notice);
+  }
+}
+
+function clearSessionResumes() {
+  window.sessionResumes = [];
+  window.lastParsedResume = null;
+
+  try {
+    sessionStorage.removeItem(SESSION_RESUMES_KEY);
+  } catch (error) {
+    console.error('Could not clear session resumes:', error);
+  }
+
+  updateResumeCount();
+  document.getElementById('result').innerHTML = '';
+  document.getElementById('matchZone').style.display = 'none';
+  document.getElementById('matchResult').innerHTML = '';
+  document.getElementById('questionsResult').innerHTML = '';
+  document.getElementById('chatLog').innerHTML = '';
+}
+
+document.addEventListener('DOMContentLoaded', restoreSessionState);
 
 async function parseResume() {
   const fileInput = document.getElementById('resumeFile');
@@ -268,46 +380,18 @@ async function parseResume() {
     }
 
     window.lastParsedResume = data;
-    document.getElementById('matchZone').style.display = 'block';
+    window.sessionResumes.push(data);
 
-    uploadedCount++;
-    document.getElementById('resumeCount').textContent =
-      `${uploadedCount} candidate file${uploadedCount === 1 ? '' : 's'} loaded in this session`;
+    const saved = saveSessionResumes();
+    updateResumeCount();
+    renderResume(data);
 
-    const skillTags = (data.skills || []).map(s => `<span class="tag">${s}</span>`).join('');
-
-    resultDiv.innerHTML = `
-      <div class="result-card">
-        <div class="name-line">${data.name || 'Unknown'}</div>
-        <div class="email-line">${data.email ? `<a href="mailto:${data.email}" class="contact-link">${data.email}</a>` : 'no contact on file'}</div>
-        <div class="email-line" style="margin-top:-14px;">
-          ${[
-            data.phone ? `<a href="tel:${data.phone.replace(/\s+/g, '')}" class="contact-link">${data.phone}</a>` : null,
-            data.linkedin ? `<a href="${data.linkedin.startsWith('http') ? data.linkedin : 'https://' + data.linkedin}" target="_blank" class="contact-link">${data.linkedin}</a>` : null,
-            data.github ? `<a href="${data.github.startsWith('http') ? data.github : 'https://' + data.github}" target="_blank" class="contact-link">${data.github}</a>` : null,
-            data.portfolio ? `<a href="${data.portfolio.startsWith('http') ? data.portfolio : 'https://' + data.portfolio}" target="_blank" class="contact-link">${data.portfolio}</a>` : null
-          ].filter(Boolean).join(' &nbsp;·&nbsp; ') || ''}
-        </div>
-
-        <div class="field-label">Skills</div>
-        <div>${skillTags}</div>
-
-        <div class="field-label">Experience</div>
-        ${(data.experience || []).map(e => `
-          <div class="entry"><strong>${e.role}</strong> — ${e.company}<br>${e.duration}</div>
-        `).join('') || '<div class="entry">No record</div>'}
-
-        <div class="field-label">Projects</div>
-        ${(data.projects || []).map(p => `
-          <div class="entry"><strong>${p.title}</strong> — ${p.technologies}<br>${p.description}</div>
-        `).join('') || '<div class="entry">No record</div>'}
-
-        <div class="field-label">Education</div>
-        ${(data.education || []).map(e => `
-          <div class="entry"><strong>${e.degree}</strong><br>${e.institution} — ${e.year}</div>
-        `).join('') || '<div class="entry">No record</div>'}
-      </div>
-    `;
+    if (!saved) {
+      const warning = document.createElement('p');
+      warning.className = 'error-msg';
+      warning.textContent = 'Resume extracted, but this browser could not save it for refresh recovery. Check browser storage settings.';
+      document.getElementById('result').prepend(warning);
+    }
   } catch (err) {
     resultDiv.innerHTML = `<p class="error-msg">Connection failed — is the backend running?</p>`;
   }
@@ -436,7 +520,7 @@ async function sendChat() {
     const response = await fetch(API_BASE + '/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question })
+      body: JSON.stringify({ question, resumes: window.sessionResumes })
     });
 
     const data = await response.json();
