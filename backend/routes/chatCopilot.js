@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/chat', async (req, res) => {
   try {
     const { question, resumes } = req.body || {};
 
@@ -14,7 +14,8 @@ router.post('/', async (req, res) => {
 
     if (!Array.isArray(resumes) || resumes.length === 0) {
       return res.status(400).json({
-        error: 'No resumes are available in this browser session. Please upload a resume first.'
+        error:
+          'No resumes are available in this browser session. Please upload a resume first.'
       });
     }
 
@@ -22,16 +23,19 @@ router.post('/', async (req, res) => {
 
     if (!apiKey) {
       return res.status(503).json({
-        error: 'AI service is not configured. Please set GEMINI_API_KEY on the server.'
+        error:
+          'AI service is not configured. Please set GEMINI_API_KEY on the server.'
       });
     }
 
-    const candidateContext = resumes.map((resume, index) => {
-      return `
+    const candidateContext = resumes
+      .map((resume, index) => {
+        return `
 Candidate ${index + 1}:
 ${JSON.stringify(resume, null, 2)}
 `;
-    }).join('\n');
+      })
+      .join('\n');
 
     const prompt = `
 You are RecruitCopilot, an AI recruitment assistant.
@@ -88,7 +92,8 @@ ${question.trim()}
       console.error('Gemini API error:', result);
 
       return res.status(502).json({
-        error: 'The AI service could not answer your question. Please try again.'
+        error:
+          'The AI service could not answer your question. Please try again.'
       });
     }
 
@@ -99,7 +104,8 @@ ${question.trim()}
 
     if (!answer) {
       return res.status(502).json({
-        error: 'The AI service returned an empty response. Please try again.'
+        error:
+          'The AI service returned an empty response. Please try again.'
       });
     }
 
