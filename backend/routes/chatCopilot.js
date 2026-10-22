@@ -2,6 +2,11 @@
 const express = require('express');
 const router = express.Router();
 
+const GEMINI_MODELS = [
+  'gemini-3.8-flash',
+  'gemini-3.5-flash-lite'
+];
+
 router.post('/chat', async (req, res) => {
   try {
     const { question, resumes } = req.body || {};
@@ -29,12 +34,10 @@ router.post('/chat', async (req, res) => {
     }
 
     const candidateContext = resumes
-      .map((resume, index) => {
-        return `
+      .map((resume, index) => `
 Candidate ${index + 1}:
 ${JSON.stringify(resume, null, 2)}
-`;
-      })
+`)
       .join('\n');
 
     const prompt = `
@@ -55,69 +58,105 @@ RECRUITER QUESTION:
 ${question.trim()}
 `;
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 30000);
+    const retryableStatuses = new Set([
+      404, 429, 500, 502, 503, 504
+    ]);
 
-    let response;
+    let lastError = null;
 
-    try {
-      response = await fetch(
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=' +
-    encodeURIComponent(apiKey),
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [{ text: prompt }]
-              }
-            ],
-            generationConfig: {
-              temperature: 0.3
-            }
-          }),
-          signal: controller.signal
-        }
+    for (const model of GEMINI_MODELS) {
+      const controller = new AbortController();
+      const timeout = setTimeout(
+        () => controller.abort(),
+        30000
       );
-    } finally {
-      clearTimeout(timeout);
+
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [{ text: prompt }]
+                }
+              ],
+              generationConfig: {
+                temperature: 0.3
+              }
+            }),
+            signal: controller.signal
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          lastError = {
+            model,
+            status: response.status,
+            details: result
+          };
+
+          console.error(`Gemini ${model} error:`, {
+            status: response.status,
+            details: result
+          });
+
+          if (retryableStatuses.has(response.status)) {
+            console.warn(
+              `Trying the next Gemini model after ${model} failed.`
+            );
+            continue;
+          }
+
+          return res.status(502).json({
+            error:
+              'The AI service could not answer your question. Please try again.'
+          });
+        }
+
+        const answer = result?.candidates?.[0]?.content?.parts
+          ?.map(part => part.text || '')
+          .join('')
+          .trim();
+
+        if (answer) {
+          console.log(`RecruitCopilot answered using ${model}.`);
+          return res.json({ answer });
+        }
+
+        lastError = {
+          model,
+          status: response.status,
+          details: 'Gemini returned no answer.'
+        };
+
+        console.warn(`Gemini ${model} returned an empty answer.`);
+      } catch (error) {
+        lastError = {
+          model,
+          details: error.message
+        };
+
+        console.error(`Gemini ${model} request failed:`, error.message);
+      } finally {
+        clearTimeout(timeout);
+      }
     }
 
-    const result = await response.json();
+    console.error('All Gemini models failed:', lastError);
 
-    if (!response.ok) {
-      console.error('Gemini API error:', result);
-
-      return res.status(502).json({
-        error:
-          'The AI service could not answer your question. Please try again.'
-      });
-    }
-
-    const answer = result?.candidates?.[0]?.content?.parts
-      ?.map(part => part.text || '')
-      .join('')
-      .trim();
-
-    if (!answer) {
-      return res.status(502).json({
-        error:
-          'The AI service returned an empty response. Please try again.'
-      });
-    }
-
-    return res.json({ answer });
+    return res.status(502).json({
+      error:
+        'Both AI models are currently unavailable. Please try again shortly.'
+    });
   } catch (error) {
     console.error('RecruitCopilot chat error:', error);
-
-    if (error.name === 'AbortError') {
-      return res.status(504).json({
-        error: 'The AI request timed out. Please try again.'
-      });
-    }
 
     return res.status(500).json({
       error: 'Something went wrong while answering your question.'
